@@ -7,6 +7,7 @@ import GoogleMapReact from "google-map-react";
 
 const App = () => {
   const [flats, setFlats] = useState([]);
+  const [sortedFlats, setSortedFlats] = useState([]);
   useEffect(() => {
     axios
       .get(
@@ -14,6 +15,7 @@ const App = () => {
       )
       .then(res => {
         setFlats(res.data);
+        setSortedFlats(res.data);
       });
   }, []);
   const [center, setCenter] = useState({
@@ -30,9 +32,8 @@ const App = () => {
 
   const handleSearch = e => {
     setSearch(e.target.value);
-    const res = flats;
-    setFlats(
-      res.filter(flat => new RegExp(e.target.value, "i").exec(flat.name))
+    setSortedFlats(
+      flats.filter(flat => new RegExp(e.target.value, "i").exec(flat.name))
     );
   };
 
@@ -49,14 +50,14 @@ const App = () => {
           />
         </div>
         <div className="flats">
-          {flats.map(flat => {
+          {sortedFlats.map(flat => {
             return <Flat key={flat.name} flat={flat} handler={selectFlat} />;
           })}
         </div>
       </div>
       <div className="map">
         <GoogleMapReact center={center} zoom={14}>
-          {flats.map(flat => {
+          {sortedFlats.map(flat => {
             return (
               <Marker
                 key={flat.name}
